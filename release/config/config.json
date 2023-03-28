@@ -1,39 +1,132 @@
 {
-  "log": {
-    "level": "info"
-  },
+    "log": {
+        "disabled": true,
+        "level": "trace",
+        "output": "/usr/local/sing-box/sing-box.log",
+        "timestamp": true
+    },
   "dns": {
-    "servers": [
-      {
-        "address": "tls://8.8.8.8"
-      }
-    ]
+          "servers": [
+            {
+                "tag": "cf-tls4",
+                "address": "local",
+                "address_strategy": "prefer_ipv4",
+                "strategy": "prefer_ipv4",
+                "detour": "direct4"
+            },
+            {
+                "tag": "cf-tls6",
+                "address": "2606:4700:4700::1111",
+                "address_strategy": "prefer_ipv6",
+                "strategy": "prefer_ipv6",
+                "detour": "direct6"
+            },
+            {
+                "tag": "google-udp",
+                "address": "8.8.8.8",
+                "address_strategy": "prefer_ipv4",
+                "strategy": "prefer_ipv4",
+                "detour": "direct4"
+            },
+            {
+                "tag": "block",
+                "address": "rcode://success"
+            }
+        ],
+        "rules": [
+        {
+          "domain": ["zippstorm.com","googletagservices.com"],
+          "ip_version": 6,
+          "server": "cf-tls6"
+        },
+        {
+          "domain": ["zippstorm.com","googletagservices.com"],
+          "ip_version": 4,
+          "server": "cf-tls4"
+        },
+        {
+          "geosite": "category-ads-all",
+          "server": "block",
+          "disable_cache": true
+        }
+        ],
+        "final": "cf-tls4",
+        "strategy": "prefer_ipv4",
+        "disable_cache": false,
+        "disable_expire": false
   },
   "inbounds": [
     {
-      "type": "shadowsocks",
+      "tag": "xx",
+      "type": "vmess",
       "listen": "::",
-      "listen_port": 8080,
       "sniff": true,
-      "method": "2022-blake3-aes-128-gcm",
-      "password": "8JCsPssfgS8tiRwiMlhARg=="
+      "sniff_override_destination": true,
+      "tcp_fast_open": true,
+      "listen_port": 50276,
+      "users": [
+        {
+          "name": "user",
+          "uuid": "xxxxxxxxxxxxxxxxxxxxxxx",
+          "alterId": 0
+        }
+      ],
+      "transport": {"type": "ws",
+                    "path" : "/xx"}
     }
   ],
   "outbounds": [
     {
-      "type": "direct"
+        "type": "direct",
+        "tag": "direct6",
+        "domain_strategy": "prefer_ipv6"
+    },
+    {
+        "type": "direct",
+        "tag": "direct4",
+        "bind_interface" : "eth0",
+        "domain_strategy": "prefer_ipv4"
+    },
+    {
+        "type": "direct",
+        "tag": "warp",
+        "bind_interface" : "wgcf",
+        "domain_strategy": "prefer_ipv4"
     },
     {
       "type": "dns",
       "tag": "dns-out"
+    },
+    {
+      "type": "block",
+      "tag": "block"
     }
   ],
   "route": {
+    "geoip": {
+      "path": "/usr/local/etc/sing-box/geoip.db",
+      "download_url": "https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db"
+    },
+    "geosite": {
+      "path": "/usr/local/etc/sing-box/geosite.db",
+      "download_url": "https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db"
+    },
     "rules": [
+      {
+        "network": "tcp",
+        "geosite": [
+            "dazn","speedtest"
+        ],
+        "domain": [
+          "hostloc.com"
+        ],
+        "outbound": "warp"
+      },
       {
         "protocol": "dns",
         "outbound": "dns-out"
       }
-    ]
+    ],
+    "final": "direct4"
   }
 }
