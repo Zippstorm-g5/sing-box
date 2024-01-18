@@ -88,7 +88,7 @@
     {
         "type": "direct",
         "tag": "warp",
-        "bind_interface" : "wgcf",
+        "bind_interface" : "warp",
         "domain_strategy": "prefer_ipv4"
     },
     {
@@ -101,25 +101,37 @@
     }
   ],
   "route": {
-    "geoip": {
-      "path": "/usr/local/etc/sing-box/geoip.db",
-      "download_url": "https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db"
-    },
-    "geosite": {
-      "path": "/usr/local/etc/sing-box/geosite.db",
-      "download_url": "https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db"
-    },
+    "rule_set": [
+      {
+        "tag": "geosite-netflix",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geoip-netflix.srs",
+        "download_detour": "direct4"
+      },
+      {
+        "tag": "geosite-dazn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geoip-dazn.srs",
+        "download_detour": "direct4"
+      },
+      {
+        "tag": "geosite-disney",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geoip-disney.srs",
+        "download_detour": "direct4"
+      }
+    ],
     "rules": [
       {
         "protocol": "dns",
         "outbound": "dns-out"
       },
       {
-        "network": "tcp",
-        "geosite": [
-            "netflix","dazn"
-          ],
-        "outbound": "warp"
+        "rule_set": ["geosite-netflix", "geosite-disney"],
+        "outbound": "direct4"
       }
     ],
     "final": "direct4"
