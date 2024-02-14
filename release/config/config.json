@@ -16,7 +16,7 @@
             },
             {
                 "tag": "cf-tls6",
-                "address": "2606:4700:4700::1111",
+                "address": "tcp://2606:4700:4700::1111",
                 "address_strategy": "prefer_ipv6",
                 "strategy": "prefer_ipv6",
                 "detour": "direct6"
