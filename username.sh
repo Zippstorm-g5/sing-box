@@ -32,3 +32,5 @@ mkdir -p /var/lib/sing-box
 
 #启用sing-box服务
 systemctl enable sing-box
+#重启ing-box服务
+systemctl restart sing-box
