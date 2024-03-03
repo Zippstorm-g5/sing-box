@@ -9,7 +9,7 @@
           "servers": [
             {
                 "tag": "cf-tls4",
-                "address": "1.1.1.1",
+                "address": "udp://1.1.1.1",
                 "address_strategy": "prefer_ipv4",
                 "strategy": "prefer_ipv4",
                 "detour": "direct4"
@@ -45,7 +45,7 @@
           "server": "cf-tls4"
         },
         {
-          "geosite": "category-ads-all",
+          "rule_set": ["geosite-category-ads-all"],
           "server": "block",
           "disable_cache": true
         }
@@ -128,6 +128,13 @@
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-youtube.srs",
+        "download_detour": "direct4"
+      },
+      {
+        "tag": "geosite-category-ads-all",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs",
         "download_detour": "direct4"
       }
     ],
