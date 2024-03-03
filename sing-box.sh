@@ -9,11 +9,20 @@ chmod -x /etc/systemd/system/sing-box.service
 cp ./mysing/release/config/config.json /usr/local/etc/sing-box/config.json
 cd /usr/local/bin
 
-wget https://github.com/SagerNet/sing-box/releases/download/v1.9.0-alpha.6/sing-box-1.9.0-alpha.6-linux-amd64.tar.gz
+# 使用GitHub API查询最新版本的资产URL
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest)
 
-tar -xzvf sing-box-1.9.0-alpha.6-linux-amd64.tar.gz
+# 从API响应中解析.tar.gz文件的下载URL
+DOWNLOAD_URL=$(echo "$LATEST_RELEASE" | grep -oP '"browser_download_url": "\K(.*linux-amd64.tar.gz)')
 
-mv ./sing-box-1.9.0-alpha.6-linux-amd64/sing-box sing-box
+# 使用wget下载最新版本的.tar.gz文件
+wget "$DOWNLOAD_URL"
+
+# 解压下载的文件
+tar -xzvf sing-box-*-linux-amd64.tar.gz
+
+# 移动sing-box到当前目录
+mv ./sing-box-*/sing-box sing-box
 
 
 chmod 755 sing-box
