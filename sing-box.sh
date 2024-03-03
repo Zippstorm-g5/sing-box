@@ -19,7 +19,7 @@ DOWNLOAD_URL=$(echo "$RELEASES" | grep -oP '"browser_download_url": "\K(.*linux-
 wget "$DOWNLOAD_URL"
 
 # 解压下载的文件
-tar -xzvf sing-box-*-linux-amd64.tar.gz
+tar -xzvf ./sing-box-*-linux-amd64.tar.gz
 
 # 移动sing-box到当前目录
 mv ./sing-box-*/sing-box .
