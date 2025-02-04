@@ -9,20 +9,14 @@ chmod -x /etc/systemd/system/sing-box.service
 cp ./mysing/release/config/config.json /usr/local/etc/sing-box/config.json
 cd /usr/local/bin
 
-# 使用GitHub API查询所有发布
-RELEASES=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases)
+VERSION="1.7.0"
+RELEASES=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/tags/v$VERSION")
 
-# 从API响应中解析第一个发布（最新的，包括预发布版本）的.tar.gz文件的下载URL
 DOWNLOAD_URL=$(echo "$RELEASES" | grep -oP '"browser_download_url": "\K(.*linux-amd64.tar.gz)' | head -1)
 
-# 使用wget下载.tar.gz文件
 wget "$DOWNLOAD_URL"
-
-# 解压下载的文件
-tar -xzvf ./sing-box-*-linux-amd64.tar.gz
-
-# 移动sing-box到当前目录
-mv ./sing-box-*/sing-box .
+tar -xzvf sing-box-$VERSION-linux-amd64.tar.gz
+mv sing-box-$VERSION-linux-amd64/sing-box .
 
 
 
