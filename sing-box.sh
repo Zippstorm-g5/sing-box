@@ -9,7 +9,7 @@ chmod -x /etc/systemd/system/sing-box.service
 cp ./mysing/release/config/config.json /usr/local/etc/sing-box/config.json
 cd /usr/local/bin
 
-VERSION="1.7.0"
+VERSION="1.8.0"
 RELEASES=$(curl -s "https://api.github.com/repos/SagerNet/sing-box/releases/tags/v$VERSION")
 
 DOWNLOAD_URL=$(echo "$RELEASES" | grep -oP '"browser_download_url": "\K(.*linux-amd64.tar.gz)' | head -1)
